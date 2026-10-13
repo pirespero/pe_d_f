@@ -28,10 +28,18 @@ export async function extrairTextoDaPagina(
     const conteudo = await pagina.getTextContent()
 
     const texto = conteudo.items
-      .map((item) => ('str' in item ? item.str : ''))
-      .join(' ')
+      .map((item) => {
+        if (!('str' in item)) {
+          return ''
+        }
+        return item.str + (item.hasEOL ? '\n' : ' ')
+      })
+      .join('')
 
-    return texto.replace(/\s+/g, ' ').trim()
+    return texto
+      .replace(/[ \t]+/g, ' ')
+      .replace(/ ?\n ?/g, '\n')
+      .trim()
   } finally {
     await tarefa.destroy()
   }

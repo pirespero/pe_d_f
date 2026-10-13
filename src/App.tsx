@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { arquivoTemCabecalhoPdf, extrairTextoDaPagina } from './services/pdf'
+import { dividirEmFrases } from './services/textProcessing'
 
 const TAMANHO_MAXIMO_MB = 50
 const TAMANHO_MAXIMO_BYTES = TAMANHO_MAXIMO_MB * 1024 * 1024
@@ -72,6 +73,8 @@ function App() {
     mensagemDeStatus = `Arquivo escolhido: ${nomeDoArquivo}`
   }
 
+  const frases = dividirEmFrases(textoDaPagina)
+
   return (
     <>
       <a className="skip-link" href="#conteudo">
@@ -97,10 +100,15 @@ function App() {
 
         {mensagemDeErro && <p role="alert">{mensagemDeErro}</p>}
 
-        {textoDaPagina && (
+        {frases.length > 0 && (
           <section aria-labelledby="titulo-texto">
             <h2 id="titulo-texto">Texto da página 1</h2>
-            <p>{textoDaPagina}</p>
+            <p>{frases.length} frases encontradas.</p>
+            <ol>
+              {frases.map((frase, indice) => (
+                <li key={indice}>{frase}</li>
+              ))}
+            </ol>
           </section>
         )}
       </main>
